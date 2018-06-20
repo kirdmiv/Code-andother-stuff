@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1529143650 source:c:\users\kirdm\vstutitelnaya lksh\e2\main.cpp
+	<iostream>
+	<string>
+	<algorithm>
+	<stdio.h>
+	<stdlib.h>
+	<iomanip>
+	<math.h>
+	<cstdio>
+	<cstring>
+	<vector>
+	<fstream>
+	<utility>
+	<functional>
+	<set>
+

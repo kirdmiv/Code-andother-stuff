@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1523299644 source:c:\users\kirdm\vstutitelnaya lksh\b\main.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<fstream>
+	<utility>
+	<functional>
+	<set>
+

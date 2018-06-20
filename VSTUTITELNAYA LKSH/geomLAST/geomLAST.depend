@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1523891453 source:c:\users\kirdm\vstutitelnaya lksh\geomlast\main.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<fstream>
+	<utility>
+	<functional>
+	<set>
+	<string>
+	<math.h>
+	<cmath>
+
