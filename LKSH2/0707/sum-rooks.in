@@ -1,0 +1,23 @@
+5 9
+A 2 2
+A 3 1
+A 4 2
+Q 1 1
+Q 2 2
+Q 3 3
+Q 4 4
+Q 5 5
+Q 1 5
+
+
+
+
+num = 1
+    while num * 2 < n:
+        num *= 2
+    tree = [0] * num
+    for i in range(n - 1):
+        tree[n - i] = 0
+    for i in range(n - 2, -1, -1):
+        tree[i] = tree[2 * i + 1] + tree[2 * i + 2]
+    return tree
