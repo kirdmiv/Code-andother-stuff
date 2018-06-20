@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1521534928 source:c:\users\kirdm\documents\codeblocks\camp-2018\main.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<fstream>
+	<utility>
+	<functional>
+

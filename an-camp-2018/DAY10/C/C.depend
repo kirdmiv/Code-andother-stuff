@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1521800744 source:c:\users\kirdm\documents\codeblocks\an-camp-2018\day10\c\main.cpp
+	<iostream>
+	<vector>
+	<math.h>
+
