@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<htm>
+    <head>
+        <title>Flickr Sets Downloader</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <!--
+        Simple web app to download SETs from Flickr
+        @Author: Ido Green
+        @date: 5/20/2011
+        -->
+        <!-- TODO: move it to its own file -->
+        <style type="text/css">
+            body {
+                background-color:#FFFFFF;
+                background-image:url(gradient.jpg);
+                background-repeat:no-repeat;
+                color:#666666;
+                font-family:arial, sans;
+                font-size:100%;
+                line-height:1.7em;
+                margin:1em 2em;
+            }
+
+            h1 {
+                font-size: 2.18em;
+                letter-spacing:-0.01em;
+            }
+
+            h2 {
+                font-size: 1.45em;
+                letter-spacing:-0.02em;
+            }
+
+            ul.navigation {
+                background-color:#333333;
+                padding:0em 0.5em;
+                list-style-type:none;
+            }
+
+            ul.navigation li {
+                border-right:1px solid #666666;
+                display:inline;
+            }
+
+            .navigation a {
+                color:#FFFFFF;
+                padding:0.5em;
+            }
+            .navigation a:hover {
+                text-decoration:none;
+                color:#FFFFFF;
+                background-color:#669966;
+            }
+
+            .description {
+                font-size: 1.2em;
+            }
+
+            strong {
+                background-color:#FFFF99;
+            }
+
+            #bottom {
+                border-top:2px solid #333333;
+                padding-top:1em;
+            }
+            .textInput {
+                width: 190px;
+                height: 35px;
+                border: 1px solid #DADADA;
+                margin-left: 6px;
+                font-family: helvetica;
+                font-size: 110%;
+                color: #505050;
+                padding: 3px;
+            }
+
+            button {
+                width: 110px;
+                height: 42px;
+                margin: 8px;
+                font-size: 105%;
+            }
+
+            #disclaimer {
+                font-size: 90%;
+                text-align: center;
+            }
+
+            img {
+                margin: 5px;
+            }
+
+            #imgContainer {
+                margin-top: 10px;
+                display: none;
+                overflow-y: hidden;
+                width: 285px;
+                max-height: 440px;
+            }
+
+            ul#grid {
+                list-style: none;
+                margin: 6px;
+                width: 95%;
+            }
+
+            #grid li {
+                float: left;
+                margin: 5px;
+            }
+
+            .portfolio {
+                padding: 20px;
+                margin-left: auto; margin-right: auto;
+                width: 99%;
+                font-family: 'GraublauWeb', arial, serif;
+                text-align: center;
+            }
+
+            .portfolio h2 {
+                clear: both;
+                font-size: 35px;
+                font-weight: normal;
+                color: #58595b;
+            }
+
+            #grid li a:hover img {
+                opacity:0.3;  filter:alpha(opacity=30);
+            }
+
+            #grid li img {
+                background-color: white;
+                padding: 7px; margin: 0;
+                border: 1px dotted #58595b;
+                width: 129px;
+                height: 145px;
+            }
+
+            #grid li a {
+                display: block;
+            }
+
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+        <script>
+            const localProxy = "http://flickrdown:8821/s_proxy.php";
+            const apiUrl = "http://api.flickr.com/services/rest/?method=";
+            const apiKeyParam = "&api_key=XXXX"; // use your keys here
+            const perPage = "&per_page=100";
+            var page = 1;
+
+            /**
+             * Get all picture sizes and create thumbnail
+             */
+            function getPicture(id) {
+                $.ajax({
+                    type: "post",
+                    url: localProxy,
+                    data: encodeURI( "photo_id=" + id),
+                    dataType: "xml",
+
+                    success: function(xml) {
+                        var thumbUrl = $(xml).find('size').first().attr('source');
+                        var bigUrl = $(xml).find('size').last().attr('source');
+
+                        if( thumbUrl && bigUrl ){
+
+                            var img = document.createElement("image");
+                            img.src = thumbUrl;
+
+                            var link = document.createElement("a");
+                            link.href = bigUrl;
+                            link.target = "_blank";
+                            $(link).click(function() {
+                                // Used to, maybe, replace the URL when clicking with the download URL
+                                link.href = getPhotoURL( link.href );
+                            });
+
+                            link.appendChild(img);
+                            $("#grid").append("<li>");
+                            $("#grid").append(link);
+                            $("#grid").append("</li>");
+                        }
+                    },
+                    error: function(xml) {
+                        console.log("err? xml"+xml);
+                        alert ("Oppss... could not find this picture - please check its number and permissions again");
+                    }
+                });
+            }
+
+            /**
+             * Get all pictures inside some Photoset
+             */
+            function getPhotoset(id){
+                $.ajax({
+                    url: localProxy,
+                    type: "POST",
+                    data: encodeURI("photoset_id=" + id),
+                    dataType: "xml",
+
+                    success: function(xml) {
+                        var gotImgs = false;
+                        $(xml).find('photo').each(function(){
+                            getPicture( $(this).attr('id') );
+                            gotImgs = true;
+                        });
+                        if (gotImgs) {
+                            page++;
+                            $("#setOk").attr('disabled', 'disabled');  //css('color','grey'); //html("+30");
+                            $("#actionButtons").show("slow");
+                        }
+                        else {
+                            alert ("Oppss... could not find this set. Please check its number and permissions again");
+                        }
+                    },
+                    error: function(xml) {
+                        console.log("err? xml"+xml);
+                        alert ("Oppss... could not find this set. Please check its number and permissions again");
+                    }
+                });
+            }
+
+            /**
+             * Get the URL to open or download the big photo
+             */
+            function getPhotoURL(url) {
+                var urlArr = url.split(".");
+                urlArr[urlArr.length - 2] += "_d";
+                return urlArr.join(".");
+
+                return url;
+            }
+
+            /**
+             * Button handlers
+             */
+            $(document).ready(function(){
+                $("#actionButtons").hide();
+
+                $("#photoOk").click(function() {
+                    if( $("#photoId").attr('value') ){
+                        getPicture( $("#photoId").attr('value') );
+                    }
+                });
+
+                // Set "Get" button
+                $("#setOk").click(function(){
+                    if( $("#setId").attr('value') ) {
+                        getPhotoset( $("#setId").attr('value') );
+                    }
+                });
+
+                // Reset the page and the Set button
+                $("#setId").keydown(function(event) {
+                    page = 1;
+                    //$("#setOk").html("Go");
+                    if (event.keyCode == '13') {
+                        $("#setOk").click();
+                    }
+                });
+
+                // Open all photos
+                $("#downAll").click(function() {
+                    var imgs = [];
+                    $("img").each(function() {
+                        imgs.push( getPhotoURL( $(this).parent().attr("href") ) );
+                    });
+                    if( imgs.length > 0 ) {
+                        if( confirm("Are you sure you wish to download all the photos?") ) {
+                            // TODO - put in web worker
+                            for( var i = 1; i < imgs.length; i++ ) {
+                                window.open(imgs[i]);
+                            }
+                        }
+                    }
+                });
+
+                // Clear photos
+                $("#clear").click(function(){
+                    $("img").each(function() {
+                        $(this).parent().remove();
+                    });
+                    $("#actionButtons").hide('fast');
+                    page = 1;
+                    $("#setOk").attr('disabled', false);//html("Get");
+                });
+            });
+
+        </script>
+    </head>
+    <body>
+        <h1>Flickr Sets Downloader</h1>
+
+        <div id="actions">
+            Set<input id="setId" class="textInput" /> <button id="setOk">Go</button> <br/>
+            <div class="portfolio">
+                <div id="actionButtons">
+                    <button id="downAll" title="Download all the photos">Download</a>
+                        <button id="clear" title="clear this set">Clear</a><br/>
+                </div>
+               <ul id="grid"></ul>
+           </div>
+        </div>
+
+       <ul class="navigation">
+          <li><a href="http://flickr.com" target="_blank">Search Flickr</a></li>
+          <li><a href="https://github.com/greenido" target="_blank">Help</a></li>
+       </ul>
+
+       <div id="bottom">
+               <div id="disclaimer">Please DO NOT download photos that you don't have permissions.</div>
+       </div>
+    </body>
+ </html>

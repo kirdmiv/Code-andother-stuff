@@ -1,0 +1,25 @@
+{
+  "name": "Eschool autofill",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "My ext for eschool autofill...",
+  "browser_action": {
+    "default_menu": "Menu",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "http://*/*",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.eschool.center/#/Login"
+      ],
+      "js": [
+        "fill.js"
+      ]
+    }
+  ]
+}
