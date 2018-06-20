@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1522688120 source:c:\users\kirdm\documents\codeblocks\itmo\daykakoyt\sufmass\main.cpp
+	<iostream>
+	<vector>
+	<cstring>
+
