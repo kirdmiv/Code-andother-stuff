@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1528716611 source:c:\users\kirdm\sirius18\day09\a\main.cpp
+	<bits/stdc++.h>
+	"ext/rope"
+	"ext/pb_ds/detail/standard_policies.hpp"
+	"ext/pb_ds/assoc_container.hpp"
+

@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1529147272 source:c:\users\kirdm\sirius18\day14\e\main.cpp
+	<iostream>
+	<string>
+	<algorithm>
+	<stdio.h>
+	<stdlib.h>
+	<iomanip>
+	<math.h>
+	<cstdio>
+	<cstring>
+	<vector>
+	<fstream>
+	<utility>
+	<functional>
+	<set>
+
